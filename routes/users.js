@@ -18,21 +18,23 @@ router.get('/logout', comprobarAcceso, function(req, res) {
     req.flash('success_msg', 'Sesión terminada.');
     res.redirect('/users/login');
 });
-// Ruta de actulizar perfil
+// Ruta de actulizar usuario
 router.get('/update', comprobarAcceso, function(req, res) {
     res.render('update');
 });
-// Ruta de eliminar perfil
-router.get('/delete', comprobarAcceso, function(req, res) {
-    User.eliminarUsuario('angelo.zambrano.1990@gmail.com', function(err) {
-        if (err) throw err;
-        else {
-            req.logout(); // PROBAR OJO
-            req.flash('success_msg', 'Cuenta eliminada.');
-            res.redirect('/users/login');
-        }
-    });
-});
+// Ruta de eliminar usuario
+// router.get('/delete', comprobarAcceso, function(req, res) {
+//     var email = req.body.emailactual;
+//     console.log(email);
+//     User.eliminarUsuario(email, function(err) {
+//         if (err) throw err;
+//         else {
+//             req.logout(); // PROBAR OJO
+//             req.flash('success_msg', 'Cuenta eliminada.');
+//             res.redirect('/users/login');
+//         }
+//     });
+// });
 // Token de validacion de usuario con acceso
 function comprobarAcceso(req, res, next) {
     if (req.isAuthenticated()) {
@@ -153,5 +155,18 @@ router.post('/update', function(req, res) {
             console.log(user);
         });
     }
+});
+//
+router.post('/delete', function(req, res) {
+    var email = req.body.emailactual;
+    console.log(email);
+    User.eliminarUsuario(email, function(err) {
+        if (err) throw err;
+        else {
+            req.logout(); // PROBAR OJO
+            req.flash('success_msg', 'Cuenta eliminada.');
+            res.redirect('/users/login');
+        }
+    });
 });
 module.exports = router;
