@@ -22,20 +22,7 @@ router.get('/logout', comprobarAcceso, function(req, res) {
 router.get('/update', comprobarAcceso, function(req, res) {
     res.render('update');
 });
-// Ruta de eliminar usuario
-// router.get('/delete', comprobarAcceso, function(req, res) {
-//     var email = req.body.emailactual;
-//     console.log(email);
-//     User.eliminarUsuario(email, function(err) {
-//         if (err) throw err;
-//         else {
-//             req.logout(); // PROBAR OJO
-//             req.flash('success_msg', 'Cuenta eliminada.');
-//             res.redirect('/users/login');
-//         }
-//     });
-// });
-// Token de validacion de usuario con acceso
+
 function comprobarAcceso(req, res, next) {
     if (req.isAuthenticated()) {
         return next();
@@ -156,14 +143,14 @@ router.post('/update', function(req, res) {
         });
     }
 });
-//
+// Eliminar usuario
 router.post('/delete', function(req, res) {
     var email = req.body.emailactual;
     console.log(email);
     User.eliminarUsuario(email, function(err) {
         if (err) throw err;
         else {
-            req.logout(); // PROBAR OJO
+            req.logout();
             req.flash('success_msg', 'Cuenta eliminada.');
             res.redirect('/users/login');
         }
