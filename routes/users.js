@@ -3,6 +3,7 @@ var router = express.Router();
 var passport = require('passport');
 var LocalStrategy = require('passport-local').Strategy;
 var User = require('../models/user');
+// ----------------------------------------------------------------------------------------- Inicio rutas GET
 // Ruta de registro
 router.get('/register', function(req, res) {
     res.render('register');
@@ -11,6 +12,25 @@ router.get('/register', function(req, res) {
 router.get('/login', function(req, res) {
     res.render('login');
 });
+// Ruta de logout
+router.get('/logout', comprobarAcceso, function(req, res) {
+    req.logout();
+    req.flash('success_msg', 'Sesión terminada.');
+    res.redirect('/users/login');
+});
+// Ruta de actulizar perfil
+router.get('/update', comprobarAcceso, function(req, res) {
+    res.render('update');
+});
+// Token de validacion de usuario loggeado
+function comprobarAcceso(req, res, next) {
+    if (req.isAuthenticated()) {
+        return next();
+    } else {
+        res.redirect('/users/login');
+    }
+}
+// ----------------------------------------------------------------------------------------- Inicio rutas POST
 // Registrar usuario
 router.post('/register', function(req, res) {
     var name = req.body.name;
@@ -52,6 +72,7 @@ router.post('/register', function(req, res) {
         });
     }
 });
+// Estrategia de acceso
 passport.use(new LocalStrategy(function(email, password, done) {
     User.obtenerUsuarioPorEmail(email, function(err, user) {
         if (err) throw err;
@@ -80,16 +101,12 @@ passport.deserializeUser(function(id, done) {
         done(err, user);
     });
 });
+// Acceder usuario
 router.post('/login', passport.authenticate('local', {
     successRedirect: '/',
     failureRedirect: '/users/login',
     failureFlash: true
 }), function(req, res) {
     res.redirect('/');
-});
-router.get('/logout', function(req, res) {
-    req.logout();
-    req.flash('success_msg', 'Sesión terminada.');
-    res.redirect('/users/login');
 });
 module.exports = router;
