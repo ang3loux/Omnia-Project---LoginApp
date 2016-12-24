@@ -11,13 +11,13 @@ router.get('/register', function(req, res) {
 router.get('/login', function(req, res) {
     res.render('login');
 });
-// Register User
+// Registrar usuario
 router.post('/register', function(req, res) {
     var name = req.body.name;
     var email = req.body.email;
     var password = req.body.password;
     var password2 = req.body.password2;
-    // Validation
+    // Validacion de campos
     req.checkBody('name', 'Campo "Nombre" no puede quedar vacio.').notEmpty();
     req.checkBody('email', 'Campo "Email" no puede quedar vacio.').notEmpty();
     req.checkBody('email', 'Formato de "Email" no valido.').isEmail();
@@ -29,15 +29,15 @@ router.post('/register', function(req, res) {
             errors: errors
         });
     } else {
-        User.getUserByEmail(email, function(err, user) {
+        User.obtenerUsuarioPorEmail(email, function(err, user) {
             if (err) throw err;
             if (!user) {
-                var newUser = new User({
+                var nuevoUsuario = new User({
                     name: name,
                     email: email,
                     password: password
                 });
-                User.createUser(newUser, function(err, user) {
+                User.createUser(nuevoUsuario, function(err, user) {
                     if (err) throw err;
                     else {
                         req.flash('success_msg', 'Registro exitoso.');
@@ -53,14 +53,14 @@ router.post('/register', function(req, res) {
     }
 });
 passport.use(new LocalStrategy(function(email, password, done) {
-    User.getUserByEmail(email, function(err, user) {
+    User.obtenerUsuarioPorEmail(email, function(err, user) {
         if (err) throw err;
         if (!user) {
             return done(null, false, {
                 message: 'Usuario no registrado.'
             });
         }
-        User.comparePassword(password, user.password, function(err, isMatch) {
+        User.compararPassword(password, user.password, function(err, isMatch) {
             if (err) throw err;
             if (isMatch) {
                 return done(null, user);
@@ -76,7 +76,7 @@ passport.serializeUser(function(user, done) {
     done(null, user.id);
 });
 passport.deserializeUser(function(id, done) {
-    User.getUserById(id, function(err, user) {
+    User.obtenerUsuarioPorId(id, function(err, user) {
         done(err, user);
     });
 });
