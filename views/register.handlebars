@@ -1,0 +1,43 @@
+<h1 class="page-header">Registro</h1>
+{{#if errors}}
+<div class="alert alert-dismissible alert-danger">
+    <button type="button" class="close" data-dismiss="alert">&times;</button>
+    {{#each errors}}
+    <strong>{{msg}}</strong><br>
+    {{/each}}
+</div>
+{{/if}}
+<form class="form-horizontal" method="post" action="/users/register">
+    <fieldset>                      
+        <div class="form-group">
+            <label for="inputName" class="col-lg-1 control-label">Nombre</label>
+            <div class="col-lg-11">
+                <input type="text" class="form-control" name="name" id="inputName" placeholder="Nombre">
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="inputEmail" class="col-lg-1 control-label">Email</label>
+            <div class="col-lg-11">
+                <input type="email" class="form-control" name="email" id="inputEmail" placeholder="Email">
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="inputPassword" class="col-lg-1 control-label">Contraseña</label>
+            <div class="col-lg-11">
+                <input type="password" class="form-control" name="password" id="inputPassword" placeholder="Contraseña">
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="inputPassword2" class="col-lg-1 control-label">Confirmar contraseña</label>
+            <div class="col-lg-11">
+                <input type="password" class="form-control" name="password2" id="inputPassword2" placeholder="Contraseña">
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="col-lg-11 col-lg-offset-1">
+                <button type="reset" class="btn btn-danger">Cancelar</button>
+                <button type="submit" class="btn btn-primary">Registrarse</button>
+            </div>
+        </div>
+    </fieldset>
+</form>
