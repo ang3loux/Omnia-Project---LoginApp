@@ -27,17 +27,25 @@
                 <input type="email" class="form-control" name="emailactual" id="inputEmail2" placeholder="Email" value="{{user.email}}" readonly="true">
             </div>
         </div>
-
-        <!-- <div class="form-group">
+        <div class="form-group">
             <label for="inputPassword" class="col-lg-1 control-label">Contraseña</label>
             <div class="col-lg-11">
                 <input type="password" class="form-control" name="password" id="inputPassword" placeholder="Contraseña">
             </div>
-        </div> -->        
+        </div>  
         <div class="form-group">
-            <div class="col-lg-11 col-lg-offset-1">
+            <label for="inputPassword2" class="col-lg-1 control-label">Confirmar contraseña</label>
+            <div class="col-lg-11">
+                <input type="password" class="form-control" name="password2" id="inputPassword2" placeholder="Contraseña">
+            </div>
+        </div>      
+        <div class="form-group">
+            <div class="col-lg-9 col-lg-offset-1">
                 <a class="btn btn-danger" href="/users/update">Resetear</a>
                 <button type="submit" class="btn btn-primary">Actualizar</button>
+            </div>
+            <div class="col-lg-2 text-right">
+                <a class="btn btn-danger" href="/users/delete">Eliminar perfil</a>
             </div>
         </div>
     </fieldset>

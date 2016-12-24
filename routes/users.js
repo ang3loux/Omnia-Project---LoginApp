@@ -22,6 +22,17 @@ router.get('/logout', comprobarAcceso, function(req, res) {
 router.get('/update', comprobarAcceso, function(req, res) {
     res.render('update');
 });
+// Ruta de eliminar perfil
+router.get('/delete', comprobarAcceso, function(req, res) {
+    User.eliminarUsuario('angelo.zambrano.1990@gmail.com', function(err) {
+        if (err) throw err;
+        else {
+            req.logout(); // PROBAR OJO
+            req.flash('success_msg', 'Cuenta eliminada.');
+            res.redirect('/users/login');
+        }
+    });
+});
 // Token de validacion de usuario con acceso
 function comprobarAcceso(req, res, next) {
     if (req.isAuthenticated()) {
@@ -114,13 +125,13 @@ router.post('/update', function(req, res) {
     var name = req.body.name;
     var emailnuevo = req.body.emailnuevo;
     var emailactual = req.body.emailactual;
-    console.log(name + " " + emailnuevo + " " + emailactual);
-    // var password = req.body.password;
+    var password = req.body.password;
     // Validacion de campos
     req.checkBody('name', 'Campo "Nombre" no puede quedar vacio.').notEmpty();
     req.checkBody('emailnuevo', 'Campo "Email" no puede quedar vacio.').notEmpty();
     req.checkBody('emailnuevo', 'Formato de "Email" no valido.').isEmail();
-    // req.checkBody('password', 'Campo "Contraseña" no puede quedar vacio.').notEmpty();
+    req.checkBody('password', 'Campo "Contraseña" no puede quedar vacio.').notEmpty();
+    req.checkBody('password2', 'Contraseñas no coinciden.').equals(req.body.password);
     var errors = req.validationErrors();
     if (errors) {
         res.render('update', {
@@ -130,10 +141,9 @@ router.post('/update', function(req, res) {
         var usuarioActual = {
             name: name,
             emailactual: emailactual,
-            emailnuevo: emailnuevo //,
-                //password: password
+            emailnuevo: emailnuevo,
+            password: password
         };
-        console.log(usuarioActual.name + " " + usuarioActual.emailnuevo + " " + usuarioActual.emailactual);
         User.actualizarUsuario(usuarioActual, function(err, user) {
             if (err) throw err;
             else {
@@ -141,7 +151,7 @@ router.post('/update', function(req, res) {
                 res.redirect('/users/update');
             }
             console.log(user);
-        })
+        });
     }
 });
 module.exports = router;

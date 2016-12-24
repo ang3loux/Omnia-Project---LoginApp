@@ -26,15 +26,27 @@ module.exports.crearUsuario = function(nuevoUsuario, callback) {
     });
 }
 module.exports.actualizarUsuario = function(usuarioActual, callback) {
+    bcrypt.genSalt(10, function(err, salt) {
+        bcrypt.hash(usuarioActual.password, salt, function(err, hash) {
+            usuarioActual.password = hash;
+            var query = {
+                email: usuarioActual.emailactual
+            };
+            User.findOneAndUpdate(query, {
+                "$set": {
+                    "name": usuarioActual.name,
+                    "email": usuarioActual.emailnuevo,
+                    "password": usuarioActual.password
+                }
+            }, callback);
+        });
+    });
+}
+module.exports.eliminarUsuario = function(email, callback) {
     var query = {
-        email: usuarioActual.emailactual
+        email: email
     };
-    User.findOneAndUpdate(query, {
-        "$set": {
-            "name": usuarioActual.name,
-            "email": usuarioActual.emailnuevo
-        }
-    }, callback);
+    User.findOneAndRemove(query, callback);
 }
 module.exports.obtenerUsuarioPorEmail = function(email, callback) {
     var query = {
