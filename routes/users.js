@@ -22,7 +22,7 @@ router.get('/logout', comprobarAcceso, function(req, res) {
 router.get('/update', comprobarAcceso, function(req, res) {
     res.render('update');
 });
-// Token de validacion de usuario loggeado
+// Token de validacion de usuario con acceso
 function comprobarAcceso(req, res, next) {
     if (req.isAuthenticated()) {
         return next();
@@ -57,7 +57,7 @@ router.post('/register', function(req, res) {
                     email: email,
                     password: password
                 });
-                User.createUser(nuevoUsuario, function(err, user) {
+                User.crearUsuario(nuevoUsuario, function(err, user) {
                     if (err) throw err;
                     else {
                         req.flash('success_msg', 'Registro exitoso.');
@@ -71,6 +71,14 @@ router.post('/register', function(req, res) {
             }
         });
     }
+});
+// Acceder usuario
+router.post('/login', passport.authenticate('local', {
+    successRedirect: '/',
+    failureRedirect: '/users/login',
+    failureFlash: true
+}), function(req, res) {
+    res.redirect('/');
 });
 // Estrategia de acceso
 passport.use(new LocalStrategy(function(email, password, done) {
@@ -101,12 +109,39 @@ passport.deserializeUser(function(id, done) {
         done(err, user);
     });
 });
-// Acceder usuario
-router.post('/login', passport.authenticate('local', {
-    successRedirect: '/',
-    failureRedirect: '/users/login',
-    failureFlash: true
-}), function(req, res) {
-    res.redirect('/');
+// Actualizar usuario
+router.post('/update', function(req, res) {
+    var name = req.body.name;
+    var emailnuevo = req.body.emailnuevo;
+    var emailactual = req.body.emailactual;
+    console.log(name + " " + emailnuevo + " " + emailactual);
+    // var password = req.body.password;
+    // Validacion de campos
+    req.checkBody('name', 'Campo "Nombre" no puede quedar vacio.').notEmpty();
+    req.checkBody('emailnuevo', 'Campo "Email" no puede quedar vacio.').notEmpty();
+    req.checkBody('emailnuevo', 'Formato de "Email" no valido.').isEmail();
+    // req.checkBody('password', 'Campo "Contraseña" no puede quedar vacio.').notEmpty();
+    var errors = req.validationErrors();
+    if (errors) {
+        res.render('update', {
+            errors: errors
+        });
+    } else {
+        var usuarioActual = {
+            name: name,
+            emailactual: emailactual,
+            emailnuevo: emailnuevo //,
+                //password: password
+        };
+        console.log(usuarioActual.name + " " + usuarioActual.emailnuevo + " " + usuarioActual.emailactual);
+        User.actualizarUsuario(usuarioActual, function(err, user) {
+            if (err) throw err;
+            else {
+                req.flash('success_msg', 'Perfil actualizado.');
+                res.redirect('/users/update');
+            }
+            console.log(user);
+        })
+    }
 });
 module.exports = router;

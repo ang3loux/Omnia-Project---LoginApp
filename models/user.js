@@ -17,7 +17,7 @@ var UserSchema = mongoose.Schema({
     }
 });
 var User = module.exports = mongoose.model('User', UserSchema);
-module.exports.createUser = function(nuevoUsuario, callback) {
+module.exports.crearUsuario = function(nuevoUsuario, callback) {
     bcrypt.genSalt(10, function(err, salt) {
         bcrypt.hash(nuevoUsuario.password, salt, function(err, hash) {
             nuevoUsuario.password = hash;
@@ -25,12 +25,22 @@ module.exports.createUser = function(nuevoUsuario, callback) {
         });
     });
 }
+module.exports.actualizarUsuario = function(usuarioActual, callback) {
+    var query = {
+        email: usuarioActual.emailactual
+    };
+    User.findOneAndUpdate(query, {
+        "$set": {
+            "name": usuarioActual.name,
+            "email": usuarioActual.emailnuevo
+        }
+    }, callback);
+}
 module.exports.obtenerUsuarioPorEmail = function(email, callback) {
     var query = {
         email: email
     };
     User.findOne(query, callback);
-    //User.find(query, callback); // No funciona D:
 }
 module.exports.obtenerUsuarioPorId = function(id, callback) {
     User.findById(id, callback);
